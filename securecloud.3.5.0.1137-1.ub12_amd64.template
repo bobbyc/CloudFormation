@@ -1,0 +1,151 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters" : {
+    "PASSPHRASE": {
+      "Description" : "SecureCloud provisioning passphrase",
+      "Type": "String"
+    },
+    "ACCOUNTID": {
+      "Description" : "SecureCloud account ID",
+      "Type": "String"
+    },
+    "AWSKEYNAME" : {
+      "Description" : "AWS Key name to launch instance",
+      "Type" : "String"
+    },
+    "InstanceType" : {
+      "Description" : "EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.small",
+      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    }
+  },
+    "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "64" },
+      "m1.medium"   : { "Arch" : "64" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "m3.xlarge"   : { "Arch" : "64" },
+      "m3.2xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "64" },
+      "c1.xlarge"   : { "Arch" : "64" }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "32" : "ami-def89fb7", "64" : "ami-d0f89fb9" },
+      "us-west-1"      : { "32" : "ami-fc002cb9", "64" : "ami-fe002cbb" },
+      "us-west-2"      : { "32" : "ami-0ef96e3e", "64" : "ami-70f96e40" },
+      "eu-west-1"      : { "32" : "ami-c27b6fb6", "64" : "ami-ce7b6fba" },
+      "sa-east-1"      : { "32" : "ami-a1da00bc", "64" : "ami-a3da00be" },
+      "ap-southeast-1" : { "32" : "ami-66084734", "64" : "ami-64084736" },
+      "ap-southeast-2" : { "32" : "ami-06ea7a3c", "64" : "ami-04ea7a3e" },
+      "ap-northeast-1" : { "32" : "ami-fc6ceefd", "64" : "ami-fe6ceeff" }
+    }
+  },
+  "Resources": {
+    "Ec2Instance": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+            "AvailabilityZone": { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+            "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                                  { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" },
+                                  "Arch" ] } ] },
+            "InstanceType": { "Ref" : "InstanceType" },
+            "KeyName": {
+                "Ref": "AWSKEYNAME"
+            },
+            "SourceDestCheck": "",
+            "Monitoring": "false",
+            "SecurityGroups": [
+              {
+                "Ref": "sgdefault"
+              }
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "Ub 12.04 x64"
+              }
+            ],
+            "Volumes": [
+              {
+                "Device": "/dev/sdc",
+                "VolumeId": {
+                  "Ref": "EBS1"
+                }
+              }
+            ],
+            "UserData": {"Fn::Base64" : {"Fn::Join" : ["", [
+                "#!/bin/bash\n",
+                "wget http://files.trendmicro.com/products/securecloud/3.5/scagent-3.5.0.1137-1.ub12_amd64.bin\n",
+                "chmod +x ./scagent-3.5.0.1137-1.ub12_amd64.bin\n",
+                "./scagent-3.5.0.1137-1.ub12_amd64.bin quiet\n",
+                "cat > /var/lib/securecloud/agentconfig.ini << EOL\n",
+                "[Agent]\n",
+                "KMS_URL=https://ms.securecloud.com\n",
+                "ACCOUNT_ID=",{"Ref": "ACCOUNTID"},"\n",
+                "CSP=Amazon-AWS\n",
+                "POLICY=Default Policy\n",
+                "AUTO_PROVISION=no\n",
+                "EOL\n",
+                "/var/lib/securecloud/scprov.sh conf -x \"", {"Ref": "PASSPHRASE"}, "\" -e -q\n",
+                "/var/lib/securecloud/scprov.sh prov -d data -x \"", {"Ref": "PASSPHRASE"}, "\" -e -q\n"
+                ]]}
+            }
+        }
+    },
+    "EBS1": {
+      "Type": "AWS::EC2::Volume",
+      "Properties": {
+        "AvailabilityZone": { "Fn::Select" : [ "0", { "Fn::GetAZs" : { "Ref" : "AWS::Region" } } ] },
+        "Size": "10",
+        "VolumeType": "standard"
+      }
+    },
+    "sgdefault": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "default group",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "514",
+            "ToPort": "514",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "3389",
+            "ToPort": "3389",
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "udp",
+            "FromPort": "514",
+            "ToPort": "514",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
+  },
+  "Description": "SecureCloud 3.6 for Ubuntu 12.04 x86_64"
+}
