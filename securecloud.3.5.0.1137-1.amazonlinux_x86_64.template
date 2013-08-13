@@ -6,17 +6,17 @@
   "Parameters" : {
     "ACCOUNTID": {
       "Description" : "SecureCloud account ID",
-      "Default" : "DFB4EAD8-7835-43FC-A00E-64F77E81DDBB", 
+      "Default" : "", 
       "Type": "String"
     },
     "PASSPHRASE": {
       "Description" : "SecureCloud provisioning passphrase",
-      "Default" : "P@ssw0rd", 
+      "Default" : "", 
       "Type": "String"
     },
     "KeyPairName" : {
       "Description" : "Name of an existing Amazon EC2 key pair for RDP access",
-      "Default" : "default-AWS-AP-Singapore", 
+      "Default" : "", 
       "Type" : "String"
     },
     "InstanceType" : {
@@ -58,8 +58,7 @@
         "GroupDescription" : "Enable HTTP and RDP",
         "SecurityGroupIngress" : [
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "3389", "ToPort" : "3389", "CidrIp" : "0.0.0.0/0"}
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
         ]
       }
     },
@@ -98,17 +97,17 @@
                       { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "SecurityGroups" : [ {"Ref" : "SCAgentSecurityGroup"} ],
         "BlockDeviceMappings" : [
-          {"DeviceName" : "/dev/xvdm",
+          {"DeviceName" : "/dev/sdm",
             "Ebs" : { "VolumeSize" : "1" }
           },
-          {"DeviceName" : "/dev/xvdn",
+          {"DeviceName" : "/dev/sdn",
             "Ebs" : { "VolumeSize" : "2" }
           } ],
         "KeyName" : { "Ref" : "KeyPairName" },
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash\n",
-          "(echo n;echo p;echo 1;echo;echo;echo w) | fdisk /dev/sdm\n",          
-          "(echo n;echo p;echo 1;echo;echo;echo w) | fdisk /dev/sdn\n",
+          "(echo n;echo p;echo 1;echo;echo;echo w) | fdisk /dev/xvdm\n",          
+          "(echo n;echo p;echo 1;echo;echo;echo w) | fdisk /dev/xvdn\n",
           "mkfs.ext3 /dev/xvdm1\n",
           "mkfs.ext3 /dev/xvdn1\n",
           "mkdir -p /securedisk/disk1\n",

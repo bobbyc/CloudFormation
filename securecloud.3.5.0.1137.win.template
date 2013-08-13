@@ -106,6 +106,13 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                       { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "SecurityGroups" : [ {"Ref" : "SCAgentSecurityGroup"} ],
+        "BlockDeviceMappings" : [
+          {"DeviceName" : "/dev/sdm",
+            "Ebs" : { "VolumeSize" : "1" }
+          },
+          {"DeviceName" : "/dev/sdn",
+            "Ebs" : { "VolumeSize" : "2" }
+          } ],        
         "KeyName" : { "Ref" : "KeyPairName" },
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
           "<script>\n",
