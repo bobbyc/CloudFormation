@@ -11,14 +11,14 @@ Here are AWS CloudFormation templates for TrendMicro SecureCloud agents. You can
 
 1. Download the latest template file archive from [GitHub](https://github.com/securecloud/CloudFormation/archive/master.zip)
 2. Login to [AWS CloudFormation Console](https://console.aws.amazon.com/cloudformation/?region=ap-southeast-1) (you can switch to different region you like, to launch instances.)
-3. Click "**Create New Stack**" and input your desired stack name, for example: "my-securecloud-test-instance"
-4. Click "**Upload a Template File**", "**Browse**", choose a template file(platform) you have downloaded at Step 1. and click "Continue"
-5. Input "**KeyPairName**", the EC2 KeyPairs used to access EC2 instances.
-6. Input "**PASSPHRASE**", [SecureCloud KMS Console](https://console.securecloud.com) -> Administration -> User Management -> Provision passphrase
-7. Input "**ACCOUNTID**", [SecureCloud KMS Console](https://console.securecloud.com) -> Administration -> User Management -> Account ID
-8. Input "**InstanceType**", allowed types are "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge". 
+3. Click `"Create New Stack"` and input your desired stack name, for example: "my-securecloud-test-instance"
+4. Click `"Upload a Template File"`,`"Browse"`, choose a template file(platform) you have downloaded at Step 1. and click "Continue"
+5. Input `"KeyPairName"`, the EC2 KeyPairs used to access EC2 instances.
+6. Input `"PASSPHRASE"`, [SecureCloud KMS Console](https://console.securecloud.com) -> Administration -> User Management -> Provision passphrase
+7. Input `"ACCOUNTID"`, [SecureCloud KMS Console](https://console.securecloud.com) -> Administration -> User Management -> Account ID
+8. Input `"InstanceType"`, allowed types are "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge". 
 9. Click "Continue".
-10. (Optional) Input a **key/value pair** for instance tag, for example: "Name/my-securecloud-test-instance-01" 
+10. (Optional) Input a key/value pair for instance tag, for example: "Name/my-securecloud-test-instance-01" 
 11. Click "Continue".
 12. Review your final settings for CloudFormation stack creation.
 13. Click "Continue" to lauch stack
