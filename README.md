@@ -1,10 +1,10 @@
 ## CloudFormation Templates for SecureCloud Agent ##
 
-Here are AWS CloudFormation templates for TrendMicro SecureCloud agents. You can use these templates in [AWS CloudFormation](http://aws.amazon.com/cloudformation/) to automatically launch an ebs data disk encrypted instance on AWS. The disk encryption key is managed by TrendMicro SecureCloud **K**ey **M**anagement **S**erver.
+These are AWS CloudFormation templates for TrendMicro SecureCloud 3.5 agents. You can use these templates in [AWS CloudFormation](http://aws.amazon.com/cloudformation/) to automatically launch an ebs data disk encrypted instance on AWS. The disk encryption key is managed by TrendMicro SecureCloud **K**ey **M**anagement **S**erver.
 
 ### Prerequisites ###
 
-- SecureCloud [KMS](https://console.securecloud.com) login account with valid seats. (1 seat for 1 encryption disk)
+- [SecureCloud KMS](https://console.securecloud.com) login account with valid seats. (1 seat for 1 encryption disk)
 - An AWS EC2 account that CloudFormation service and EC2 service are enabled.
 
 ### Usage ###
@@ -47,7 +47,7 @@ Here are AWS CloudFormation templates for TrendMicro SecureCloud agents. You can
 		  }],
   
 
-	If add more ebs volumes, we also need to modify "UserData" section for new disk partition, create filesystem and mount point.
+	(Linux Only) When add more ebs volumes, we also need to modify "UserData" section for new disk partition, create filesystem and mount point.
 
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
           "#!/bin/bash\n",
@@ -64,3 +64,8 @@ Here are AWS CloudFormation templates for TrendMicro SecureCloud agents. You can
           "mount /dev/xvdn1 /securedisk/disk2\n",
 		  "mount /dev/xvdn1 /securedisk/disk3\n",
 
+- Can I use other AMI?
+
+	(Experimental!!) For RedHat CloudFormation templates, you can refer [AWS RedHat AMI ID list](http://aws.amazon.com/partners/redhat/) and change your desired version/arch AMI ID. However, if you found CloudFormation not work in some specific AMI ID, please feel free report to us, we will try to figure it out, and to see if is there any thing we can improve in CloudFormation templates.    
+
+	For other platforms and AMIs, there are still some testing need to be done. For example, the necessary packages, CloudFormation init helper version...etc. We will keep updating CloudFormation templates with more platforms and AMIs in the future.
