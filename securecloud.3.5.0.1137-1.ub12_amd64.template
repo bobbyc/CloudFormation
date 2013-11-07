@@ -9,7 +9,7 @@
       "Description" : "SecureCloud account ID",
       "Type": "String"
     },
-    "AWSKEYNAME" : {
+    "KeyPairName" : {
       "Description" : "AWS Key name to launch instance",
       "Type" : "String"
     },
@@ -58,7 +58,7 @@
                                   "Arch" ] } ] },
             "InstanceType": { "Ref" : "InstanceType" },
             "KeyName": {
-                "Ref": "AWSKEYNAME"
+                "Ref": "KeyPairName"
             },
             "SourceDestCheck": "",
             "Monitoring": "false",
