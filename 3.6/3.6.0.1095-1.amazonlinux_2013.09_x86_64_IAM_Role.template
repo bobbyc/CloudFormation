@@ -110,7 +110,7 @@
               "/var/lib/securecloud/agentconfig.ini" : {
                 "content" : { "Fn::Join" : ["", [
                   "[Agent]\n",
-                  "KMS_URL=https://ms.lab.securecloud.com\n",
+                  "KMS_URL=https://ms.securecloud.com\n",
                   "ACCOUNT_ID=", { "Ref" : "ACCOUNTID" },"\n",
                   "CSP=Amazon-AWS\n",
                   "POLICY=Default Policy\n",
